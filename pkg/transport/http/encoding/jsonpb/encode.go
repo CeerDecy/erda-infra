@@ -15,7 +15,7 @@
 package jsonpb
 
 import (
-	"encoding/json"
+	json2 "encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -25,6 +25,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	json "github.com/bytedance/sonic"
 
 	"github.com/golang/protobuf/proto"
 	protoV2 "google.golang.org/protobuf/proto"
@@ -130,7 +132,7 @@ func (w *jsonWriter) marshalMessage(m protoreflect.Message, indent, typeURL stri
 		}
 		if typeURL != "" {
 			// we are marshaling this object to an Any type
-			var js map[string]*json.RawMessage
+			var js map[string]*json2.RawMessage
 			if err = json.Unmarshal(b, &js); err != nil {
 				return fmt.Errorf("type %T produced invalid JSON: %v", m.Interface(), err)
 			}
@@ -138,7 +140,7 @@ func (w *jsonWriter) marshalMessage(m protoreflect.Message, indent, typeURL stri
 			if err != nil {
 				return fmt.Errorf("failed to marshal type URL %q to JSON: %v", typeURL, err)
 			}
-			js["@type"] = (*json.RawMessage)(&turl)
+			js["@type"] = (*json2.RawMessage)(&turl)
 			if b, err = json.Marshal(js); err != nil {
 				return err
 			}
